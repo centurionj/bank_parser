@@ -14,7 +14,7 @@ SECRET_KEY = get_random_secret_key()
 
 INSTALLED_APPS = [
     # админ
-    # 'jazzmin',
+    'jazzmin',
 
     # стандартные
     'django.contrib.admin',
