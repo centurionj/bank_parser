@@ -22,7 +22,7 @@ app.conf.beat_schedule = {
         'task': 'server.tasks.account_tasks.change_account_status_task',
         'schedule': timedelta(minutes=1),
     },
-    'delete_account_status': {
+    'delete_account': {
         'task': 'server.tasks.account_tasks.delete_account_task',
         'schedule': timedelta(minutes=10),
     },

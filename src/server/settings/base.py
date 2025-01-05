@@ -45,8 +45,8 @@ MIDDLEWARE = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    # os.getenv('BACK_DOMAIN', ''),
-    # os.getenv('FRONT_DOMAIN', ''),
+    os.getenv('BACK_DOMAIN', ''),
+    os.getenv('FRONT_DOMAIN', ''),
     'http://localhost:3000',
     'http://localhost:8000',
     'http://localhost',
