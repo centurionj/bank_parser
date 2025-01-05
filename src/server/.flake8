@@ -1,0 +1,16 @@
+[flake8]
+exclude = .git,__pycache__,poc_scripts,manage.py,poc_scripts,migrations
+ignore = A002, W503, D100, D104, D105, D106, D107, F405
+
+# A002 Игнорирование конфликтов с ключевыми словами Python
+# W503 Линтер касаемо позиционирования бинарных операторов
+# D100 Модуль без docstring
+# D104 Пустые модули
+# D105 Нет docstring у магических методов
+# D106 Нет docstring у публичных вложенных классов
+# D107 Нет docstring у публичных методов
+# F405 Импорт звёздочкой
+
+import-order-style = pep8
+max-line-length = 120
+enable-extensions = G

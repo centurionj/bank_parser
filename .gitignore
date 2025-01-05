@@ -1,0 +1,25 @@
+## ignore BACKEND
+
+# виртуальное окружение
+venv/
+env/
+
+# локальные настройки
+local_settings.py
+
+# файлы журналов и временные файлы
+*.log
+*.pot
+*.pyc
+__pycache__/
+*.swp
+
+# IDE
+.idea/
+
+# Файлы окружения
+.env
+
+# Медиа
+src/server/media/
+src/server/static/
