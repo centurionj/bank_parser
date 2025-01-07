@@ -1,12 +1,12 @@
 from __future__ import absolute_import, unicode_literals
+
 import os
 import sys
-
-from .base import CELERY_DISCOVER_TASKS
 
 from celery import Celery
 from celery.schedules import timedelta
 
+from .base import CELERY_DISCOVER_TASKS
 
 sys.path.append('/app/src')
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'server.settings.base')
@@ -26,7 +26,12 @@ app.conf.beat_schedule = {
         'task': 'server.tasks.account_tasks.delete_account_task',
         'schedule': timedelta(minutes=10),
     },
+    'bank_authenticate_all_accounts': {
+        'task': 'server.tasks.bank_auth_tasks.bank_authenticate_all_accounts_task',
+        'schedule': timedelta(minutes=30),
+    },
 }
+
 
 @app.task(bind=True)
 def debug_task(self):

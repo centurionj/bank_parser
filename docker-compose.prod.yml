@@ -10,6 +10,14 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data/
 
+  redis:
+    image: redis:latest
+    restart: on-failure
+    env_file:
+      - .env
+    ports:
+      - "6379:6379"
+
   web:
     build:
       context: .
@@ -23,6 +31,22 @@ services:
     volumes:
       - static_volume:/app/src/server/static/
       - media_volume:/app/src/server/media/
+
+  celery: &celery
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: celery -A src.server.settings worker -l info
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+      - web
+
+  celery_beat:
+    <<: *celery
+    entrypoint: celery -A src.server.settings beat -l info
 
   nginx:
     build:
