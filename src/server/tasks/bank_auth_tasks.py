@@ -3,7 +3,6 @@ from typing import Sequence
 from celery import shared_task
 from django.apps import apps
 
-# from server.apps.accounts.models import Account
 from server.tasks.scripts.bank_auth_manager import authenticate
 
 

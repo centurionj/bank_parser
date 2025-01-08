@@ -14,3 +14,4 @@ setuptools==75.6.0
 redis==5.2.1
 requests==2.32.3
 undetected-chromedriver==3.5.5
+fake_useragent==2.0.3

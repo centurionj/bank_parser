@@ -17,10 +17,21 @@ services:
     ports:
       - "6379:6379"
 
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - 4444:4444
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:4444/wd/hub/status" ]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
+
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.alp
     ports:
       - "8000:8000"
     env_file:
@@ -32,6 +43,28 @@ services:
     volumes:
       - static_volume:/app/src/server/static/
       - media_volume:/app/src/server/media/
+
+
+#  web:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile.alp
+#    ports:
+#      - "8000:8000"
+#    env_file:
+#      - .env
+#    depends_on:
+#      - db
+#      - redis
+#      - selenium
+#    volumes:
+#      - static_volume:/app/src/server/static/
+#      - media_volume:/app/src/server/media/
+#      - /tmp/.X11-unix:/tmp/.X11-unix  # Подключение сокета X11
+#    environment:
+#      - DISPLAY=:99            # Передача DISPLAY в контейнер
+#    privileged: true                  # Разрешение привилегий для работы с X11
+#    command: xvfb-run --server-args='-screen 0 1280x1024x24' /bin/bash -c "python3 manage.py runserver 0.0.0.0:8000"
 
   celery: &celery
     build:

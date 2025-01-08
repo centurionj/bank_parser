@@ -29,12 +29,13 @@ class Account(models.Model):
     is_active = models.BooleanField(default=True)
     is_authenticated = models.BooleanField(default=False)
     has_temporary_code = models.BooleanField(default=False)
+    is_errored = models.BooleanField(default=False)
     session_cookies = models.TextField('Cookies сессии', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Аккаунт'
         verbose_name_plural = 'Аккаунты'
-        ordering = ['-created_at', 'is_active', 'has_temporary_code', 'is_authenticated']
+        ordering = ['-created_at', 'is_active', '-is_errored', 'is_authenticated']
 
     def __str__(self):
         return str(self.title)

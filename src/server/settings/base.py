@@ -81,6 +81,7 @@ DATABASES = {
         'USER': os.getenv('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'postgres'),
         'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        # 'HOST': 'localhost',
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }
 }
@@ -127,11 +128,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # redis
 
 REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+# REDIS_HOST = 'localhost'
 REDIS_PORT = os.getenv('REDIS_PORT', '6379')
 
 # celery
 
 CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
 
 # celery beat
@@ -188,3 +192,6 @@ JAZZMIN_SETTINGS = {
 # Домен
 FRONT_DOMAIN = os.getenv('FRONT_DOMAIN', 'http://localhost:3000')
 BACK_DOMAIN = os.getenv('BACK_DOMAIN', 'http://localhost:8000')
+
+SESSION_COOKIE_AGE = 3600
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False

@@ -14,6 +14,7 @@ class AccountAdmin(admin.ModelAdmin):
         'created_at',
         'is_active',
         'has_temporary_code',
+        'is_errored',
         'is_authenticated'
     )
     fields = (
@@ -23,7 +24,5 @@ class AccountAdmin(admin.ModelAdmin):
         'temporary_code',
         'created_at',
         'is_active',
-        'has_temporary_code',
-        'is_authenticated'
     )
     readonly_fields = ('created_at', 'session_cookies')
