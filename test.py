@@ -1,5 +1,6 @@
 import random
 import time
+import traceback
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -10,20 +11,10 @@ from fake_useragent import UserAgent
 
 ALPHA_LOGIN_URL = 'https://private.auth.alfabank.ru/passport/cerberus-mini-blue/dashboard-blue/phone_auth?response_type=code&client_id=newclick-web&scope=openid%20newclick-web&non_authorized_user=true'
 
-proxy_list = [
-    '78.37.254.43',
-    '178.178.218.94',
-    '178.204.20.202',
-]
-
 
 def get_random_user_agent():
     ua = UserAgent()
     return ua.random
-
-
-def get_random_proxy():
-    return random.choice(proxy_list)
 
 
 def authenticate(account) -> None:
@@ -31,15 +22,15 @@ def authenticate(account) -> None:
 
     options = ChromeOptions()
     user_agent = get_random_user_agent()
-    # proxy = get_random_proxy()
-    # options.add_argument(f"--proxy-server=http://{proxy}")
     options.add_argument(f"user-agent={user_agent}")
     options.add_argument("--disable-blink-features=AutomationControlled")
     # options.add_argument("--headless")  # Раскомментировать, если не нужно видеть работу браузера
     options.add_argument("--disable-gpu")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
-    options.add_argument("--remote-debugging-port=9222")
+    options.add_argument("--disable-extensions")
+    options.add_argument("--disable-popup-blocking")
+    options.add_argument("--profile-directory=Default")
 
     driver = Chrome(options=options)
     driver.get(ALPHA_LOGIN_URL)
@@ -55,6 +46,7 @@ def authenticate(account) -> None:
         phone_input = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[data-test-id='phoneInput']"))
         )
+        time.sleep(random.randint(1, 3))
         phone_input.send_keys(f"{account['phone_number'][1:]}")
         phone_input.send_keys(Keys.TAB)  # Пропустить к следующему элементу
 
@@ -62,10 +54,11 @@ def authenticate(account) -> None:
         submit_button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button.phone-auth-browser__submit-button"))
         )
-        time.sleep(0.05)
+        time.sleep(random.randint(1, 3))
         submit_button.submit()
 
         # Вводим номер карты
+        time.sleep(0.05)
         card_input = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "input[data-test-id='card-account-input']"))
         )
@@ -74,7 +67,7 @@ def authenticate(account) -> None:
         continue_button = WebDriverWait(driver, 10).until(
             EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-test-id='card-account-continue-button']"))
         )
-        time.sleep(0.05)
+        time.sleep(random.randint(1, 3))
         continue_button.click()
 
         # Ожидаем, пока пользователь введет временный код через Django Admin
@@ -82,6 +75,7 @@ def authenticate(account) -> None:
             pass
 
         # Вводим одноразовый код
+        time.sleep(0.05)
         otp_inputs = WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, "input.code-input__input_1yhze"))
         )
@@ -107,7 +101,9 @@ def authenticate(account) -> None:
         time.sleep(5)
 
     except Exception as e:
-        print(f"Ошибка при авторизации: {e}")
+        # print(f"Ошибка при авторизации: {e}")
+        print("Ошибка при авторизации:")
+        print(traceback.format_exc())
     finally:
         driver.close()
         driver.quit()
@@ -122,7 +118,7 @@ account = {
     'is_authenticated': False,
 }
 
-# authenticate(account)
+authenticate(account)
 
-for i in range(10):
-    authenticate(account)
+# for i in range(10):
+#     authenticate(account)

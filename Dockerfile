@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.12-alpine
 
 # USR_LOCAL_BIN - путь до пользовательских скриптов
 # PROJECT_ROOT - путь до каталога внутри контейнера, в который будет
@@ -6,49 +6,48 @@ FROM python:3.12-slim
 ENV USR_LOCAL_BIN=/usr/local/bin  \
     PROJECT_ROOT=/app
 
-# Путь до исходников
+# путь до исходников
 ENV PYTHONPATH=$PYTHONPATH:$PROJECT_ROOT
 
-# Пакеты для установки
+# Пакеты, которые необходимы для работы в runtime
 ENV RUNTIME_PACKAGES="\
-    libpcre3 \
-    libjpeg-dev \
-    zlib1g-dev \
-    libssl-dev \
+    libev \
+    pcre \
+    jpeg-dev \
+    zlib-dev \
+    libressl-dev \
     libffi-dev \
     bash \
     chromium \
-    chromium-driver \
-    libx11-6 \
-    libxcomposite1 \
-    libxrandr2 \
-    libxdamage1 \
-    libxi6 \
-    fonts-dejavu \
-    libnss3 \
-    libfreetype6 \
-    libharfbuzz0b \
-    libgl1-mesa-glx"
+    chromium-chromedriver \
+    libx11 \
+    libxcomposite \
+    libxrandr \
+    libxdamage \
+    libxi \
+    ttf-freefont \
+    nss \
+    freetype \
+    harfbuzz \
+    mesa-gl \
+    xvfb-run"
 
-# Пакеты для сборки
+
+# Пакеты, которые необходимы для установки зависимостей.
+# Не останутся в итоговом образе.
 ENV BUILD_PACKAGES="\
-    build-essential \
-    libpcre3-dev \
-    gcc"
+    libev-dev \
+    build-base \
+    pcre-dev \
+    gcc \
+    linux-headers"
 
-# Установка базовых пакетов, обновление pip
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    pip install --upgrade pip
-
-# Установка пакетов для сборки
-RUN apt-get install -y --no-install-recommends $BUILD_PACKAGES
-
-# Установка пакетов для runtime
-RUN apt-get install -y --no-install-recommends $RUNTIME_PACKAGES
-
-# Очистка кеша apt
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# Установка пакетов, обновление pip
+RUN apk update && \
+    apk upgrade && \
+    pip install --upgrade pip && \
+    apk --no-cache add --virtual build-deps $BUILD_PACKAGES && \
+    apk --no-cache add $RUNTIME_PACKAGES
 
 # Установка переменных окружения для Chromium и Chromedriver
 ENV CHROME_BIN=/usr/bin/chromium-browser \
@@ -62,8 +61,9 @@ WORKDIR $PROJECT_ROOT
 # Установка зависимостей и удаление ненужных пакетов
 RUN pip install --no-cache-dir setuptools && \
     pip install --no-cache-dir -r requirements.txt && \
-    apt-get purge -y --auto-remove $BUILD_PACKAGES && \
-    rm -rf /var/cache/apt/*
+    apk del build-deps && \
+    rm -rf /var/cache/apk/* && \
+    rm -rf /var/lib/apt/lists/*
 
 # Копируем скрипты и даем права на выполнение
 COPY deploy/entrypoint.sh $USR_LOCAL_BIN/
@@ -73,13 +73,26 @@ RUN sed -i 's/\r//' $USR_LOCAL_BIN/*.sh \
     && chmod +x $USR_LOCAL_BIN/*.sh \
     && chmod +x $CHROMEDRIVER_BIN
 
-# Копирование проекта
+# копирование непосредственно проекта
 ADD src/ $PROJECT_ROOT/src/
+
+# Копирование src/server/static/ только если такая директория существует
+RUN if [ -d "$PROJECT_ROOT/src/server/static" ]; then \
+        cp -r $PROJECT_ROOT/src/server/static/ $PROJECT_ROOT/src/server/static/; \
+    fi
 
 # Копирование deploy в проект
 ADD deploy/ $PROJECT_ROOT/deploy/
 
+# Настройка прав доступа для взаимодействия с X11 удалить после тестов
+RUN apk add --no-cache mesa-gl mesa-dri-gallium && \
+    mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
+
+# Установка переменной окружения для передачи X11 удалить после тестов
+ENV DISPLAY=:99
+
 EXPOSE 8000
 
 ENTRYPOINT ["entrypoint.sh"]
+
 ENTRYPOINT ["run_web.sh"]
