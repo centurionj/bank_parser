@@ -14,9 +14,8 @@ def authenticate_account_by_id(account_id: int):
 
     try:
         payload = {'account_id': account_id}
-        response = requests.post(f'{BASE_GO_API_URL}/auth/login/', json=payload)
+        response = requests.post(f'{BASE_GO_API_URL}/auth/', json=payload)
         response.raise_for_status()  # Вызывает исключение для статусов 4xx/5xx
-
         return response.json()
 
     except Exception as e:
