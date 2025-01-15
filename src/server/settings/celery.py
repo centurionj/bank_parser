@@ -26,10 +26,10 @@ app.conf.beat_schedule = {
         'task': 'server.tasks.account_tasks.delete_account_task',
         'schedule': timedelta(minutes=10),
     },
-    'bank_authenticate_all_accounts': {
-        'task': 'server.tasks.bank_auth_tasks.bank_authenticate_all_accounts_task',
-        'schedule': timedelta(minutes=30),
-    },
+    # 'bank_authenticate_all_accounts': {
+    #     'task': 'server.tasks.bank_auth_tasks.bank_authenticate_all_accounts_task',
+    #     'schedule': timedelta(minutes=30),
+    # },
 }
 
 

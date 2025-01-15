@@ -18,27 +18,25 @@ services:
     ports:
       - "6379:6379"
 
-  web:
+  web: &web
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    depends_on:
-      - db
     env_file:
       - .env
+    depends_on:
+      - db
+      - redis
+    restart: on-failure
     volumes:
       - static_volume:/app/src/server/static/
       - media_volume:/app/src/server/media/
 
   celery: &celery
-    build:
-      context: .
-      dockerfile: Dockerfile
+    <<: *web
     entrypoint: celery -A src.server.settings worker -l info
-    env_file:
-      - .env
     depends_on:
       - db
       - redis

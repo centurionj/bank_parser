@@ -8,4 +8,13 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Account
-        fields = ['id', 'title', 'card_number', 'phone_number', 'created_at', 'is_active']
+        fields = [
+            'id',
+            'title',
+            'card_number',
+            'phone_number',
+            'created_at',
+            'is_active',
+            'is_authenticated',
+            'is_errored',
+        ]

@@ -1,5 +1,3 @@
-import json
-
 from django.db import models
 
 from server.apps.accounts.validators import (validate_card_number,
@@ -9,7 +7,7 @@ from server.apps.accounts.validators import (validate_card_number,
 class Account(models.Model):
     """Модель кредитов от лк банка."""
 
-    title = models.CharField('Название', max_length=25, null=True, blank=True)
+    title = models.CharField('Название', max_length=25, null=True, blank=True, help_text='Не обязательное поле')
     card_number = models.CharField(
         'Номер карты',
         max_length=16,
@@ -30,7 +28,8 @@ class Account(models.Model):
     is_authenticated = models.BooleanField(default=False)
     has_temporary_code = models.BooleanField(default=False)
     is_errored = models.BooleanField(default=False)
-    session_cookies = models.TextField('Cookies сессии', null=True, blank=True)
+    session_cookies = models.TextField('Cookies session', null=True, blank=True)
+    user_agent = models.TextField('Google user agent', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Аккаунт'
@@ -45,14 +44,3 @@ class Account(models.Model):
             self.has_temporary_code = True
 
         super(Account, self).save(*args, **kwargs)
-
-    def set_cookies(self, cookies):
-        """Сохранить cookies в текстовом формате."""
-
-        self.session_cookies = json.dumps(cookies)
-        self.save()
-
-    def get_cookies(self):
-        """Загрузить cookies из текстового формата."""
-
-        return json.loads(self.session_cookies) if self.session_cookies else None

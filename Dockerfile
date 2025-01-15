@@ -16,21 +16,7 @@ ENV RUNTIME_PACKAGES="\
     jpeg-dev \
     zlib-dev \
     libressl-dev \
-    libffi-dev \
-    bash \
-    chromium \
-    chromium-chromedriver \
-    libx11 \
-    libxcomposite \
-    libxrandr \
-    libxdamage \
-    libxi \
-    ttf-freefont \
-    nss \
-    freetype \
-    harfbuzz \
-    mesa-gl \
-    xvfb-run"
+    libffi-dev"
 
 
 # Пакеты, которые необходимы для установки зависимостей.
@@ -49,11 +35,6 @@ RUN apk update && \
     apk --no-cache add --virtual build-deps $BUILD_PACKAGES && \
     apk --no-cache add $RUNTIME_PACKAGES
 
-# Установка переменных окружения для Chromium и Chromedriver
-ENV CHROME_BIN=/usr/bin/chromium-browser \
-    CHROMEDRIVER_BIN=/usr/bin/chromedriver \
-    GOOGLE_CHROME_BIN=/usr/bin/chromium-browser
-
 COPY src/requirements.txt $PROJECT_ROOT/
 
 WORKDIR $PROJECT_ROOT
@@ -70,8 +51,7 @@ COPY deploy/entrypoint.sh $USR_LOCAL_BIN/
 COPY deploy/run_web.sh $USR_LOCAL_BIN/
 
 RUN sed -i 's/\r//' $USR_LOCAL_BIN/*.sh \
-    && chmod +x $USR_LOCAL_BIN/*.sh \
-    && chmod +x $CHROMEDRIVER_BIN
+    && chmod +x $USR_LOCAL_BIN/*.sh
 
 # копирование непосредственно проекта
 ADD src/ $PROJECT_ROOT/src/
@@ -83,13 +63,6 @@ RUN if [ -d "$PROJECT_ROOT/src/server/static" ]; then \
 
 # Копирование deploy в проект
 ADD deploy/ $PROJECT_ROOT/deploy/
-
-# Настройка прав доступа для взаимодействия с X11 удалить после тестов
-RUN apk add --no-cache mesa-gl mesa-dri-gallium && \
-    mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
-
-# Установка переменной окружения для передачи X11 удалить после тестов
-ENV DISPLAY=:99
 
 EXPOSE 8000
 

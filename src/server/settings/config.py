@@ -7,4 +7,4 @@ load_dotenv()
 ACCOUNT_LIFETIME_MINUTES = 40
 ACCOUNT_EXPIRATION_DELTA_DAY = 7
 
-ALPHA_LOGIN_URL = os.getenv('ALPHA_LOGING_URL', '')
+BASE_GO_API_URL = os.getenv('BASE_GO_API_URL', 'http://localhost:8080/api/v1/')

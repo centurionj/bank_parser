@@ -147,7 +147,6 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_DISCOVER_TASKS = [
     'server.tasks.account_tasks',
     'server.tasks.bank_auth_tasks',
-    'server.tasks.bank_payments_tasks',
 ]
 
 # DRF

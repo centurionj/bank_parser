@@ -9,10 +9,6 @@ gunicorn==21.2.0
 python-dotenv==1.0.1
 isort==5.12.0
 psycopg2-binary==2.9.9
-selenium==4.27.1
 setuptools==75.6.0
 redis==5.2.1
 requests==2.32.3
-undetected-chromedriver==3.5.5
-fake_useragent==2.0.3
-pyautogui==0.9.54
