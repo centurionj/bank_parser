@@ -20,13 +20,11 @@ app.autodiscover_tasks(CELERY_DISCOVER_TASKS)
 app.conf.beat_schedule = {
     'change_account_status': {
         'task': 'server.tasks.account_tasks.change_account_status_task',
-        # 'schedule': timedelta(minutes=1),
-        'schedule': timedelta(minutes=100),
+        'schedule': timedelta(minutes=1),
     },
     'delete_account': {
         'task': 'server.tasks.account_tasks.delete_account_task',
-        # 'schedule': timedelta(minutes=10),
-        'schedule': timedelta(minutes=100),
+        'schedule': timedelta(minutes=10),
     },
 }
 
