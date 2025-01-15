@@ -6,5 +6,5 @@ class AccountsConfig(AppConfig):
     name = 'server.apps.accounts'
     verbose_name = 'Аккаунты'
 
-    # def ready(self):
-    #     import server.apps.accounts.signals
+    def ready(self):
+        import server.apps.accounts.signals
