@@ -27,7 +27,7 @@ def delete_accounts_by_date():
 
     try:
         payload = {'account_ids': [account.id for account in expired_accounts]}
-        response = requests.post(f'{BASE_GO_API_URL}/account/auth/', json=payload)
+        response = requests.post(f'{BASE_GO_API_URL}/account/delete_profile/', json=payload)
         response.raise_for_status()  # Вызывает исключение для статусов 4xx/5xx
         expired_accounts.delete()
         return None
